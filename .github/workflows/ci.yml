@@ -1,58 +1,30 @@
 
-name: Azure Static Web Apps CI/CD
+name: Angular CI
 
 on:
-  workflow_run:
-    workflows: ["Angular CI"]
-    types:
-      - completed
-    branches:
-      - master
-
+  push:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - master
 
 jobs:
-  build_and_deploy_job:
-    if: >
-      (github.event_name == 'workflow_run' &&
-       github.event.workflow_run.conclusion == 'success') ||
-      (github.event_name == 'pull_request' &&
-       github.event.action != 'closed')
-
+  build:
+    name: Build and Test Angular
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout source code
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
         with:
-          submodules: true
-          lfs: false
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          node-version: 26
+          cache: npm
 
-      - name: Build And Deploy
-        id: builddeploy
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GREEN_RIVER_0760F9B0F }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "/"
-          api_location: ""
-          output_location: "dist/angular-devops-playground/browser"
+      - name: Install dependencies
+        run: npm ci
 
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+      - name: Run automated tests
+        run: npm run test -- --watch=false
 
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GREEN_RIVER_0760F9B0F }}
-          action: "close"
+      - name: Build Angular application
+        run: npm run build
