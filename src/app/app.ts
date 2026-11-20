@@ -8,10 +8,4 @@ import { Component, signal } from '@angular/core';
 })
 export class App {
   protected readonly title = signal('angular-devops-playground');
-
-  message = '';
-
-  showMessage() {
-    this.message = 'My first feature is working!';
-  }
 }
