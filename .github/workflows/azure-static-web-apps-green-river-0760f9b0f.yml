@@ -27,6 +27,7 @@ jobs:
        github.event.action != 'closed')
 
     runs-on: ubuntu-latest
+    environment: staging
     name: Build and Deploy Job
 
     steps:
