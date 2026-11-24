@@ -33,6 +33,8 @@ jobs:
     name: Build and Deploy Job
 
     steps:
+      - name: Check deployment environment
+        run: echo "Deploying to $DEPLOYMENT_ENV"
       - uses: actions/checkout@v7
         with:
           submodules: true
