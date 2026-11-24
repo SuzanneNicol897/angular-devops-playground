@@ -28,6 +28,8 @@ jobs:
 
     runs-on: ubuntu-latest
     environment: staging
+    env: 
+      DEPLOYMENT_ENV: ${{ vars.DEPLOYMENT_ENV }}
     name: Build and Deploy Job
 
     steps:
